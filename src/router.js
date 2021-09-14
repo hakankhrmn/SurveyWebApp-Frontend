@@ -13,6 +13,7 @@ import NonActiveSurveys from './components/NonActiveSurveys.vue'
 Vue.use(Router)
 
 export default new Router({
+    mode: 'history',
     routes: [
         {path: '/', name: 'Home', component: Home},
         {path: '/survey', name: 'Surveys', component: Surveys},

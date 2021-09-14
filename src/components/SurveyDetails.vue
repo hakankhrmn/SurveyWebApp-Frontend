@@ -20,30 +20,62 @@
                                        :name="index">
                                 {{response.responseText}}
                             </label>
+
+                            <mdb-btn color="default" @click.native="subs = true; modalTitle = 'Update Response'; questionIdToUpdate= question.questionId; responseIdToUpdate =response.responseId ">
+                                        Update Response
+                                    </mdb-btn>
+                                    <mdb-btn @click="deleteResponse(question.questionId,response.responseId)" color="red">Delete Response</mdb-btn>
+
+                            
+                            <br/>
                         </div>
 
+                        <br/> <br/>
 
-                        <button class="btn btn-primary "
-                                @click="addResponse(question.questionId,responseText)">
+                        <button class="btn btn-primary " @click="subs = true; modalTitle = 'Add Response'; questionIdToUpdate= question.questionId ">
                             Add Response
                         </button>
 
-                        <div>
-                            <mdb-container>
-                                <mdb-btn color="default" @click.native="subsq = true; modalTitle = 'Update Question' ">
+                        <mdb-btn color="default" @click="subs = true; modalTitle = 'Update Question'; questionIdToUpdate = question.questionId ">
                                     Update Question
                                 </mdb-btn>
                                 <mdb-btn @click="deleteQuestion(question.questionId)" color="red">Delete Question</mdb-btn>
-                                <mdb-modal :show="subsq" @close="subsq = false">
+                                
+                        
+
+                        
+
+                    </div>
+
+                    <div class="col">
+                        <result-pie :result=result />
+                    </div>
+
+                </div>
+            </div>
+
+            <mdb-btn color="default" @click.native="subs = true; modalTitle = 'Add Question' ">Add Question</mdb-btn>
+
+            <div>
+                            <mdb-container>
+                                
+                                <mdb-modal :show="subs" @close="subs = false">
                                     <mdb-modal-header class="text-center">
                                         <mdb-modal-title tag="h4" bold class="w-100">{{modalTitle}}</mdb-modal-title>
                                     </mdb-modal-header>
                                     <mdb-modal-body class="mx-3 grey-text">
-                                        <mdb-input label="Question Text" v-model="questionText" class="mb-5"/>
+                                        <div v-if="modalTitle.includes('Response')">
+                                            <mdb-input label="Response Text" v-model="responseText" class="mb-5"/>    
+                                        </div>
+
+                                        <div v-if="modalTitle.includes('Question')">
+                                            <mdb-input label="Question Text" v-model="questionText" class="mb-5"/>
+                                        </div>
+                                        
                                     </mdb-modal-body>
                                     <mdb-modal-footer center>
-                                        <mdb-btn @click.native="subsq = false"
-                                                 @click="handleQuestionOperation(question.questionId)" color="indigo">
+                                        <mdb-btn @click.native="subs = false"
+                                                 @click="handleOperation" color="indigo">
                                             {{modalTitle}}
                                             <mdb-icon icon="paper-plane" class="ml-1"/>
                                         </mdb-btn>
@@ -51,25 +83,6 @@
                                 </mdb-modal>
                             </mdb-container>
                         </div>
-
-                    </div>
-
-                    <div class="col">
-                        <mdb-container>
-                            <mdb-pie-chart
-                                    datalabels
-                                    :data="pieChartData"
-                                    :options="pieChartOptions"
-                                    :width="600"
-                                    :height="300"
-                            />
-                        </mdb-container>
-                    </div>
-
-                </div>
-            </div>
-
-            <mdb-btn color="default" @click.native="subsq = true; modalTitle = 'Add Question' ">Add Question</mdb-btn>
 
         </div>
 
@@ -80,8 +93,8 @@
 
 <script>
     import axios from 'axios'
+    import ResultPie from './ResultPie.vue'
     import {
-        mdbPieChart,
         mdbContainer,
         mdbBtn,
         mdbModal,
@@ -97,7 +110,7 @@
 
         name: "SurveyDetails",
         components: {
-            mdbPieChart,
+            ResultPie,
             mdbContainer,
             mdbBtn,
             mdbModal,
@@ -112,53 +125,15 @@
             return {
 
                 survey: null,
-                subsq: false,
+                subs: false,
                 surveyId: this.$route.params.surveyId,
                 modalTitle: '',
                 questionIdToUpdate: 0,
+                responseIdToUpdate: 0,
                 questionText: '',
+                responseText: '',
+                result: [44, 55, 13, 43, 22]
 
-                pieChartData: {
-                    labels: ["A", "B", "C", "D", "E"],
-                    datasets: [
-                        {
-                            data: [44, 55, 13, 43, 22],
-                            backgroundColor: [
-                                "#F7464A",
-                                "#46BFBD",
-                                "#FDB45C",
-                                "#949FB1",
-                                "#4D5360"
-                            ],
-                            hoverBackgroundColor: [
-                                "#FF5A5E",
-                                "#5AD3D1",
-                                "#FFC870",
-                                "#A8B3C5",
-                                "#616774"
-                            ]
-                        }
-                    ]
-                },
-                pieChartOptions: {
-                    responsive: false,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        datalabels: {
-                            color: "white",
-                            align: "center",
-                            font: {
-                                size: 16
-                            },
-                            formatter: value => {
-                                const [dataset] = this.pieChartData.datasets;
-                                const setValue = dataset.data.reduce((a, b) => a + b);
-
-                                return `${Math.round((value / setValue) * 100)}%`;
-                            }
-                        }
-                    }
-                }
             };
 
         },
@@ -169,9 +144,23 @@
                 console.log(response);
             },
 
-            async addResponse(questionId, responseText) {
-                const response = await axios.post('/survey' + this.surveyId + '/question/' + questionId, {
-                    responseText: responseText
+            async addResponse() {
+                const response = await axios.post('/survey/' + this.surveyId + '/question/' + this.questionIdToUpdate, {
+                    responseText: this.responseText
+                });
+                console.log(response);
+                this.getSurvey();
+            },
+
+            async deleteResponse(questionId, responseId) {
+                const response = await axios.delete('/survey/' + this.surveyId + '/question/' + questionId +'/response/' + responseId);
+                console.log(response);
+                this.getSurvey();
+            },
+
+            async updateResponse() {
+                const response = await axios.put('/survey/' + this.surveyId + '/question/' + this.questionIdToUpdate +'/response/' + this.responseIdToUpdate, {
+                    responseText: this.responseText
                 });
                 console.log(response);
                 this.getSurvey();
@@ -185,8 +174,8 @@
                 this.getSurvey();
             },
 
-            async updateQuestion(questionId) {
-                const response = await axios.put('/survey/' + this.surveyId + '/question/' + questionId, {
+            async updateQuestion() {
+                const response = await axios.put('/survey/' + this.surveyId + '/question/' + this.questionIdToUpdate, {
                     questionText: this.questionText
                 });
                 console.log(response);
@@ -199,11 +188,15 @@
                 this.getSurvey();
             },
 
-            handleQuestionOperation(questionId) {
+            handleOperation() {
                 if (this.modalTitle === "Add Question") {
                     return this.addQuestion();
                 } else if (this.modalTitle === "Update Question") {
-                    return this.updateQuestion(questionId);
+                    return this.updateQuestion();
+                }else if (this.modalTitle === "Add Response") {
+                    return this.addResponse();
+                } else if (this.modalTitle === "Update Response") {
+                    return this.updateResponse();
                 }
                 return null;
             }
