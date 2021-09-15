@@ -48,7 +48,7 @@
                     </div>
 
                     <div class="col">
-                        <result-pie :result=result />
+                        <result-pie :result=result(question) />
                     </div>
 
                 </div>
@@ -57,32 +57,32 @@
             <mdb-btn color="default" @click.native="subs = true; modalTitle = 'Add Question' ">Add Question</mdb-btn>
 
             <div>
-                            <mdb-container>
-                                
-                                <mdb-modal :show="subs" @close="subs = false">
-                                    <mdb-modal-header class="text-center">
-                                        <mdb-modal-title tag="h4" bold class="w-100">{{modalTitle}}</mdb-modal-title>
-                                    </mdb-modal-header>
-                                    <mdb-modal-body class="mx-3 grey-text">
-                                        <div v-if="modalTitle.includes('Response')">
-                                            <mdb-input label="Response Text" v-model="responseText" class="mb-5"/>    
-                                        </div>
+                <mdb-container>
+                    
+                    <mdb-modal :show="subs" @close="subs = false">
+                        <mdb-modal-header class="text-center">
+                            <mdb-modal-title tag="h4" bold class="w-100">{{modalTitle}}</mdb-modal-title>
+                        </mdb-modal-header>
+                        <mdb-modal-body class="mx-3 grey-text">
+                            <div v-if="modalTitle.includes('Response')">
+                                <mdb-input label="Response Text" v-model="responseText" class="mb-5"/>    
+                            </div>
 
-                                        <div v-if="modalTitle.includes('Question')">
-                                            <mdb-input label="Question Text" v-model="questionText" class="mb-5"/>
-                                        </div>
-                                        
-                                    </mdb-modal-body>
-                                    <mdb-modal-footer center>
-                                        <mdb-btn @click.native="subs = false"
-                                                 @click="handleOperation" color="indigo">
-                                            {{modalTitle}}
-                                            <mdb-icon icon="paper-plane" class="ml-1"/>
-                                        </mdb-btn>
-                                    </mdb-modal-footer>
-                                </mdb-modal>
-                            </mdb-container>
-                        </div>
+                            <div v-if="modalTitle.includes('Question')">
+                                <mdb-input label="Question Text" v-model="questionText" class="mb-5"/>
+                            </div>
+                            
+                        </mdb-modal-body>
+                        <mdb-modal-footer center>
+                            <mdb-btn @click.native="subs = false"
+                                        @click="handleOperation" color="indigo">
+                                {{modalTitle}}
+                                <mdb-icon icon="paper-plane" class="ml-1"/>
+                            </mdb-btn>
+                        </mdb-modal-footer>
+                    </mdb-modal>
+                </mdb-container>
+            </div>
 
         </div>
 
@@ -131,8 +131,7 @@
                 questionIdToUpdate: 0,
                 responseIdToUpdate: 0,
                 questionText: '',
-                responseText: '',
-                result: [44, 55, 13, 43, 22]
+                responseText: ''
 
             };
 
@@ -186,6 +185,18 @@
                 const response = await axios.delete('/survey/' + this.surveyId + '/question/' + questionId);
                 console.log(response);
                 this.getSurvey();
+            },
+
+            result(question) {
+                console.log(question);
+                
+                const resultList = [];
+                
+                question.responses.forEach(response => {
+                    resultList.push(response.respondedUsers.length)
+                });
+                console.log(resultList);
+                return resultList;
             },
 
             handleOperation() {

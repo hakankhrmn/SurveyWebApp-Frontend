@@ -21,7 +21,9 @@ export default {
         mdbPieChart,
         mdbContainer,
     },
-    props: ['result'],
+    props: {
+        result: Array
+        },
     data() {
         return {
             pieChartData: {
@@ -68,7 +70,9 @@ export default {
         };
 
     },
-
+    created() {
+        console.log(this.result);
+    }
 }
 </script>
 
