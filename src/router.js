@@ -1,14 +1,14 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Home from './components/Home.vue'
-import Surveys from './components/Surveys.vue'
-import Survey from './components/Survey.vue'
-import SurveyDetails from './components/SurveyDetails.vue'
-import Login from './components/Login.vue'
-import Register from './components/Register.vue'
-import ForgotPass from './components/ForgotPass.vue'
-import ResetPass from './components/ResetPass.vue'
-import NonActiveSurveys from './components/NonActiveSurveys.vue'
+import Home from './views/Home.vue'
+import Surveys from './views/Survey/Surveys.vue'
+import Survey from './views/Survey/Survey.vue'
+import SurveyDetails from './views/Survey/SurveyDetails.vue'
+import Login from './views/Auth/Login.vue'
+import Register from './views/Auth/Register.vue'
+import ForgotPass from './views/Auth/ForgotPass.vue'
+import ResetPass from './views/Auth/ResetPass.vue'
+import NonActiveSurveys from './views/Survey/NonActiveSurveys.vue'
 
 Vue.use(Router)
 
