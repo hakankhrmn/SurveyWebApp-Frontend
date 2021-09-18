@@ -53,12 +53,12 @@
             },
 
             async getNonActiveSurveys() {
-                const response = await axios.get('/survey/nonactives');
+                const response = await axios.get('/nonactives');
                 this.surveys = response.data;
 
             },
             async activateSurvey(surveyId) {
-                const response = await axios.put('/survey/nonactives/' + surveyId);
+                const response = await axios.put('/nonactives/' + surveyId);
                 console.log(response);
                 this.getNonActiveSurveys();
             }

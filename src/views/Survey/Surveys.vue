@@ -146,7 +146,7 @@
             },
 
             async showNonActiveSurveys() {
-                this.$router.push('/survey/nonactives');
+                this.$router.push('/nonactives');
             },
 
             async detailsSurvey(surveyId) {

@@ -19,7 +19,7 @@ export default new Router({
         {path: '/survey', name: 'Surveys', component: Surveys},
         {path: '/survey/:surveyId', name: 'Survey', component: Survey},
         {path: '/survey/:surveyId/details', name: 'SurveyDetails', component: SurveyDetails},
-        {path: '/survey/nonactives', name: 'NonActiveSurveys', component: NonActiveSurveys},
+        {path: '/nonactives', name: 'NonActiveSurveys', component: NonActiveSurveys},
         {path: '/login', name: 'Login', component: Login},
         {path: '/register', name: 'Register', component: Register},
         {path: '/forgot_password', name: 'ForgotPass', component: ForgotPass},
